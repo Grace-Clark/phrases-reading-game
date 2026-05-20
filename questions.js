@@ -37,7 +37,7 @@ const QUESTIONS = {
         { word: "big_dock",      image: "big_dock.png" },
         { word: "big_horse",     image: "big_horse.png" },
         { word: "bin_dog",       image: "bin_dog.png" },
-        { word: "small_wig_dog", image: "small_wig_dog.png" }
+        { word: "small_wig_dog", image: "small_wig_dog.png", audio: "wig_dog" }
       ]
     },
     {
@@ -78,7 +78,7 @@ const QUESTIONS = {
       options: [
         { word: "kids_hop", image: "kids_hop.png" },
         { word: "lids_hop", image: "lids_hop.png" },
-        { word: "frog_hop", image: "frog_hop.png" },
+        { word: "frog_hop", image: "frog_hop.png", audio: "frog_hops" },
         { word: "kid_mops", image: "kid_mops.png" },
         { word: "kid_hot",  image: "kid_hot.png" },
         { word: "kid_cop",  image: "kid_cop.png" }
