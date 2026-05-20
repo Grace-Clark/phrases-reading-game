@@ -189,12 +189,9 @@
       grid.appendChild(card);
     });
 
-    if (firstQuestion) {
-      setTimeout(
-        () => speak("Listen to the pictures. Then read the words. Pick the picture that matches the words."),
-        300
-      );
-    }
+    // Auto-play the step-1 direction (also visible on screen) on every question
+    // so the student is reminded what to do each time.
+    setTimeout(() => speak("Click each picture to listen. Click next when you're ready."), 300);
   }
 
   // Step 2 — phrase only
@@ -204,6 +201,7 @@
     $("ph-count").textContent = `Question ${state.mainIndex + 1} of ${QUESTIONS.main.length}`;
     $("ph-score").textContent = `Score: ${state.score}/${state.answered}`;
     $("ph-target").textContent = prettify(q.target);
+    setTimeout(() => speak("Read this phrase. Click next when you're ready."), 300);
   }
 
   // Step 3 — 6 pictures + phrase, student picks
@@ -214,6 +212,7 @@
     $("ch-score").textContent = `Score: ${state.score}/${state.answered}`;
     $("ch-target").textContent = prettify(q.target);
     $("ch-next").classList.add("hidden");
+    setTimeout(() => speak("Click the picture that matches the phrase."), 300);
 
     const grid = $("ch-options");
     grid.innerHTML = "";
@@ -255,8 +254,12 @@
       if (correctCard) correctCard.classList.add("correct");
     }
 
-    const targetPretty = prettify(q.target);
-    const chosenPretty = prettify(opt.word);
+    // Prefer the audio-override name for spoken feedback so it matches what the
+    // student just heard. E.g., word "small_wig_dog" with audio "wig_dog" should
+    // say "wig dog" in the feedback, not "small wig dog".
+    const targetOpt = q.options.find((o) => o.word === q.target);
+    const targetPretty = prettify((targetOpt && targetOpt.audio) || q.target);
+    const chosenPretty = prettify(opt.audio || opt.word);
     speak(isCorrect ? `Yes! ${targetPretty}.` : `That was ${chosenPretty}. The phrase is ${targetPretty}.`);
     $("ch-score").textContent = `Score: ${state.score}/${state.answered}`;
     $("ch-next").classList.remove("hidden");
@@ -356,7 +359,7 @@
     (async () => {
       const lines = [
         "Phrase Reading Game.",
-        "Instructions for caregivers.",
+        "Instructions for care givers.",
         "This is a reading test for your child. Please don't help them. We want to see what they know on their own.",
         "After each response, click Next to continue to the next question.",
       ];
