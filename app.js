@@ -167,18 +167,9 @@
 
   function handlePracticePick(card, opt, q) {
     if (card.classList.contains("locked")) return;
-    const isCorrect = opt.word === q.target;
-    const cards = document.querySelectorAll("#pr-options .option");
-    cards.forEach((c) => {
-      c.classList.add("locked");
-      if (c !== card && c.dataset.word !== q.target) c.classList.add("dim");
-    });
-    card.classList.add(isCorrect ? "correct" : "incorrect");
-    if (!isCorrect) {
-      const correctCard = document.querySelector(`#pr-options .option[data-word="${q.target}"]`);
-      if (correctCard) correctCard.classList.add("correct");
-    }
-    speak(isCorrect ? `Yes! That's the ${q.target}.` : `That was the ${opt.word}. The ${q.target} is here.`);
+    // No in-trial feedback — see end-of-game report for the summary. Cards are
+    // locked so students can't change their answer.
+    document.querySelectorAll("#pr-options .option").forEach((c) => c.classList.add("locked"));
     $("pr-next").classList.remove("hidden");
   }
 
@@ -199,7 +190,7 @@
     showScreen("screen-listen");
     const q = QUESTIONS.main[state.mainIndex];
     $("ls-count").textContent = `Question ${state.mainIndex + 1} of ${QUESTIONS.main.length}`;
-    $("ls-score").textContent = `Score: ${state.score}/${state.answered}`;
+    $("ls-score").textContent = "";
 
     state.visited = new Set();
     const nextBtn = $("ls-next");
@@ -247,7 +238,7 @@
     showScreen("screen-phrase");
     const q = QUESTIONS.main[state.mainIndex];
     $("ph-count").textContent = `Question ${state.mainIndex + 1} of ${QUESTIONS.main.length}`;
-    $("ph-score").textContent = `Score: ${state.score}/${state.answered}`;
+    $("ph-score").textContent = "";
     $("ph-target").textContent = prettify(q.target);
     setTimeout(() => speak(DIRECTIONS.phrase), 300);
   }
@@ -257,7 +248,7 @@
     showScreen("screen-choose");
     const q = QUESTIONS.main[state.mainIndex];
     $("ch-count").textContent = `Question ${state.mainIndex + 1} of ${QUESTIONS.main.length}`;
-    $("ch-score").textContent = `Score: ${state.score}/${state.answered}`;
+    $("ch-score").textContent = "";
     $("ch-target").textContent = prettify(q.target);
     $("ch-next").classList.add("hidden");
     setTimeout(() => speak(DIRECTIONS.choose), 300);
@@ -310,25 +301,9 @@
     if (isCorrect) state.score += 1;
     state.answers.push({ target: q.target, chosen: opt.word, correct: isCorrect });
 
-    const cards = document.querySelectorAll("#ch-options .option");
-    cards.forEach((c) => {
-      c.classList.add("locked");
-      if (c !== card && c.dataset.word !== q.target) c.classList.add("dim");
-    });
-    card.classList.add(isCorrect ? "correct" : "incorrect");
-    if (!isCorrect) {
-      const correctCard = document.querySelector(`#ch-options .option[data-word="${q.target}"]`);
-      if (correctCard) correctCard.classList.add("correct");
-    }
-
-    // Prefer the audio-override name for spoken feedback so it matches what the
-    // student just heard. E.g., word "small_wig_dog" with audio "wig_dog" should
-    // say "wig dog" in the feedback, not "small wig dog".
-    const targetOpt = q.options.find((o) => o.word === q.target);
-    const targetPretty = prettify((targetOpt && targetOpt.audio) || q.target);
-    const chosenPretty = prettify(opt.audio || opt.word);
-    speak(isCorrect ? `Yes! ${targetPretty}.` : `That was ${chosenPretty}. The phrase is ${targetPretty}.`);
-    $("ch-score").textContent = `Score: ${state.score}/${state.answered}`;
+    // Lock cards but no in-trial feedback. The end-of-game report is the
+    // teacher-facing summary.
+    document.querySelectorAll("#ch-options .option").forEach((c) => c.classList.add("locked"));
     $("ch-next").classList.remove("hidden");
   }
 
